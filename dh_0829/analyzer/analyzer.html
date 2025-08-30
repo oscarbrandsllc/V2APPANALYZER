@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="../styles/styles.css?v=20250827002411?v=20250826235225" rel="stylesheet"/>
     <style>
         :root {
             --font-sans: 'Product Sans', 'Google Sans', 'Quicksand', sans-serif;
@@ -43,17 +44,6 @@
         #stars3 { width: 3px; height: 3px; box-shadow: 1208px 1620px #FF0070, 576px 1883px #FFF, 1810px 913px #FFF, 87px 1117px #FFF, 1076px 1851px #FFF, 859px 264px #FFF, 1469px 1346px #FFF, 1651px 1493px #FFF, 767px 822px #FFF, 359px 967px #FFF, 1009px 808px #FF0070, 100px 1656px #7300ff, 1365px 1511px #7300ff, 429px 1279px #7300ff, 1381px 1850px #E86439, 1896px 1999px #E86439, 236px 718px #7300ff, 39px 1731px #7300ff, 562px 1084px #7300ff, 1067px 1431px #FF0266, 1362px 1575px #FF0266, 953px 1860px #FF0266, 1498px 499px #FF0266, 1055px 885px #FFF, 1824px 1334px #FFF, 519px 1319px #FFF, 1716px 1538px #FFF, 1305px 524px #FFF, 808px 1972px #FFF, 426px 649px #FFF, 882px 1530px #FFF, 623px 557px #FFF, 129px 1750px #FF0070; animation-duration: 350s; }
         
         @keyframes animStar { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
-
-        .glass-panel {
-            background-color: rgba(13, 14, 35, 0.21);
-            background-image: linear-gradient(rgba(255,255,255, 0.03), rgba(255,255,255, 0.03));
-            backdrop-filter: blur(6px) saturate(120%) brightness(120%);
-            border: 1px solid rgba(128, 138, 189, 0.2);
-            border-radius: 10px;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255, 0.05), 
-                        inset 0 0 0 2px rgba(200,200,200, 0.025), 
-                        0 10px 26px rgba(0,0,0, .22);
-        }
         
         h1, h2, h3 {
             font-family: var(--font-sans);
@@ -96,8 +86,6 @@
             background-image: linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 35%);
         }
 
-
-        /* Fix for browser autofill styles */
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
@@ -107,108 +95,100 @@
             transition: background-color 5000s ease-in-out 0s;
             caret-color: #c4c8ea;
         }
-
-        #usernameInput, #leagueSelect {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.01), rgba(0,0,0,0.1));
-            border: 1px solid var(--color-panel-border);
-            border-radius: 8px;
-            backdrop-filter: blur(4px) saturate(110%);
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
-            color: #c4c8ea;
-            transition: all 0.2s ease;
-        }
-
-        #usernameInput:focus, #leagueSelect:focus {
-            outline: none;
-            border-color: var(--color-accent-primary);
-            box-shadow: 0 0 8px var(--color-accent-primary-glow);
-        }
-
-        #fetchDataButton {
-            border: 1px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: var(--color-text-primary);
-            text-shadow: 0 0 2px rgba(0,0,0,0.2);
-            border-color: #766DFF;
-            box-shadow: 0 0 8px var(--color-accent-primary-glow);
-        }
-        #fetchDataButton:hover {
-             box-shadow: 0 0 12px var(--color-accent-primary-glow);
-        }
-
     </style>
 </head>
-<body class="px-2 pb-4 md:px-8 md:pb-8">
-    <div id="starfield">
+<body class="p-2 sm:p-4">
+    <div aria-hidden="true" id="starfield">
+        <div id="stars"></div>
         <div id="stars1"></div>
         <div id="stars2"></div>
         <div id="stars3"></div>
     </div>
+    <div id="noise-overlay"></div>
+    <div class="relative z-10 content-wrapper">
+        <div id="header-container">
+            <header class="app-header glass-panel">
+                <div class="header-row">
+                    <div class="menu-container">
+                        <button id="menu-button" class="menu-button">
+                            <svg viewBox="0 0 100 80" width="20" height="20">
+                                <rect width="100" height="15"></rect>
+                                <rect y="30" width="100" height="15"></rect>
+                                <rect y="60" width="100" height="15"></rect>
+                            </svg>
+                        </button>
+                        <div id="dropdown-menu" class="dropdown-menu hidden">
+                            <a href="../">Home</a>
+                            <a href="#" id="menu-rosters">Rosters</a>
+                            <a href="#" id="menu-ownership">Ownership</a>
+                            <a href="#" id="menu-analyzer">League Analyzer</a>
+                            <a href="#">Placeholder</a>
+                        </div>
+                    </div>
+                    <div class="username-area">
+                        <input autocapitalize="none" autocomplete="username" autocorrect="off" id="usernameInput" inputmode="text" name="username" placeholder="SLPR Username..." type="text" value="The_Oracle"/>
+                    </div>
+                    <div class="custom-select-wrapper">
+                        <select disabled id="leagueSelect">
+                            <option>Select a league...</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+        </div>
 
-    <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
-            <p class="text-md text-gray-400">KTC Team Value Analysis</p>
-        </header>
+        <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
+            <!-- Header -->
+            <header class="text-center space-y-2">
+                <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
+                <p class="text-md text-gray-400">KTC Team Value Analysis</p>
+            </header>
 
-        <!-- Controls -->
-        <div class="glass-panel py-1 px-2 flex flex-col md:flex-row items-center justify-center gap-1" style="display: none;">
-            <input type="text" id="usernameInput" placeholder="Enter Sleeper Username" class="px-3 py-1 text-sm w-full md:w-auto">
-            <div id="leagueSelectWrapper" class="hidden w-full md:w-auto">
-                <select id="leagueSelect" class="px-3 py-1 text-sm w-full md:w-auto appearance-none">
-                    <option>Select a league...</option>
-                </select>
+            <!-- Summary Stats -->
+            <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
+                <!-- Summary boxes injected here -->
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden text-center py-8">
+                <p class="text-2xl animate-pulse">Analyzing cosmic data streams...</p>
             </div>
-            <button id="fetchDataButton" class="bg-purple-600/50 hover:bg-purple-700/50 text-white font-bold text-sm py-1 px-3 w-full md:w-auto">Analyze League</button>
-        </div>
-        
-        <!-- Summary Stats -->
-        <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
-            <!-- Summary boxes injected here -->
-        </section>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="hidden text-center py-8">
-            <p class="text-2xl animate-pulse">Analyzing cosmic data streams...</p>
-        </div>
-
-        <!-- Main Content -->
-        <main id="infographicContent" class="hidden space-y-6">
-            <!-- Top Level Charts -->
-            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="glass-panel p-2">
-                    <h2 class="text-2xl text-center mb-4">Starting Lineup Value</h2>
-                    <div class="chart-container">
-                        <canvas id="startersValueChart"></canvas>
+            <!-- Main Content -->
+            <main id="infographicContent" class="hidden space-y-6">
+                <!-- Top Level Charts -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel p-2">
+                        <h2 class="text-2xl text-center mb-4">Starting Lineup Value</h2>
+                        <div class="chart-container">
+                            <canvas id="startersValueChart"></canvas>
+                        </div>
                     </div>
-                </div>
-                <div class="glass-panel p-2">
-                    <h2 class="text-2xl text-center mb-4">Overall Team Value</h2>
-                    <div class="chart-container">
-                        <canvas id="overallValueChart"></canvas>
+                    <div class="glass-panel p-2">
+                        <h2 class="text-2xl text-center mb-4">Overall Team Value</h2>
+                        <div class="chart-container">
+                            <canvas id="overallValueChart"></canvas>
+                        </div>
                     </div>
-                </div>
-            </section>
-            
-            <!-- Radar Chart -->
-            <section class="glass-panel p-2">
-                <h2 class="text-2xl text-center mb-4">Positional Strength</h2>
-                <div class="chart-container">
-                    <canvas id="radarChart"></canvas>
-                </div>
-            </section>
+                </section>
 
-            <!-- Detailed Starter Rankings -->
-            <section class="glass-panel p-6">
-                <h2 class="text-2xl text-center mb-6">Starting Position Power Grid</h2>
-                <div id="starterRankingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                    <!-- Grid items will be injected here by JavaScript -->
-                </div>
-            </section>
-        </main>
+                <!-- Radar Chart -->
+                <section class="glass-panel p-2">
+                    <h2 class="text-2xl text-center mb-4">Positional Strength</h2>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Detailed Starter Rankings -->
+                <section class="glass-panel p-6">
+                    <h2 class="text-2xl text-center mb-6">Starting Position Power Grid</h2>
+                    <div id="starterRankingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                        <!-- Grid items will be injected here by JavaScript -->
+                    </div>
+                </section>
+            </main>
+        </div>
     </div>
 
     <script>
@@ -220,8 +200,12 @@
             // --- DOM Elements ---
             const usernameInput = document.getElementById('usernameInput');
             const leagueSelect = document.getElementById('leagueSelect');
-            const fetchDataButton = document.getElementById('fetchDataButton');
             const loadingIndicator = document.getElementById('loading');
+            const menuButton = document.getElementById('menu-button');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const menuRosters = document.getElementById('menu-rosters');
+            const menuOwnership = document.getElementById('menu-ownership');
+            const menuAnalyzer = document.getElementById('menu-analyzer');
             const infographicContent = document.getElementById('infographicContent');
             const starterRankingsGrid = document.getElementById('starterRankingsGrid');
             const summaryStats = document.getElementById('summaryStats');
@@ -254,17 +238,40 @@
 
 
             // --- Event Listeners ---
-            fetchDataButton.addEventListener('click', handleFetchData);
+            menuButton?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (dropdownMenu && !dropdownMenu.classList.contains('hidden') && !menuButton.contains(e.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+
+            menuRosters?.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                if (!username) return;
+                window.location.href = `../rosters/rosters.html?username=${encodeURIComponent(username)}`;
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuAnalyzer?.addEventListener('click', () => {
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuOwnership?.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                if (!username) return;
+                window.location.href = `../ownership/ownership.html?username=${encodeURIComponent(username)}`;
+                dropdownMenu.classList.add('hidden');
+            });
+
             leagueSelect.addEventListener('change', () => {
                 if (leagueSelect.value) {
                     analyzeLeague(leagueSelect.value);
                 }
             });
-
-            if (username) {
-                usernameInput.value = username;
-                handleFetchData();
-            }
 
             async function handleFetchData() {
                 const username = usernameInput.value.trim();
@@ -294,7 +301,6 @@
                                 await analyzeLeague(leagueId);
                             } else {
                                 alert('The specified league was not found for this user.');
-                                setLoading(false);
                             }
                         } else {
                             // Auto-select and analyze the first league
@@ -308,6 +314,11 @@
                 } finally {
                     setLoading(false);
                 }
+            }
+
+            if (username) {
+                usernameInput.value = username;
+                handleFetchData();
             }
 
             // --- Data Fetching ---
@@ -885,25 +896,17 @@
                     option.textContent = league.name;
                     leagueSelect.appendChild(option);
                 });
-                document.getElementById('leagueSelectWrapper').classList.remove('hidden');
                 leagueSelect.disabled = false;
             }
 
             function setLoading(isLoading) {
                 if (isLoading) {
                     loadingIndicator.classList.remove('hidden');
-                    fetchDataButton.disabled = true;
-                    fetchDataButton.textContent = 'Loading...';
                 } else {
                     loadingIndicator.classList.add('hidden');
-                    fetchDataButton.disabled = false;
-                    fetchDataButton.textContent = 'Analyze League';
                 }
             }
         });
     </script>
 </body>
 </html>
-
-
-
