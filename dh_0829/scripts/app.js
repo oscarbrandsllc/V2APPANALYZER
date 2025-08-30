@@ -47,12 +47,13 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuRosters?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `rosters/rosters.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+            if (pageType === 'rosters') {
                 handleFetchRosters();
+            } else {
+                const prefix = pageType === 'welcome' ? '' : '../';
+                window.location.href = `${prefix}rosters/rosters.html?username=${encodeURIComponent(username)}`;
             }
             dropdownMenu.classList.add('hidden');
         });
@@ -67,7 +68,7 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
             window.location.href = url;
             dropdownMenu.classList.add('hidden');
         });
-
+        
         analyzeLeagueButton?.addEventListener('click', () => {
             const username = usernameInput.value.trim();
             if (!username || !state.currentLeagueId) return;
@@ -75,12 +76,13 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuOwnership?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `ownership/ownership.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+            if (pageType === 'ownership') {
                 handleFetchOwnership();
+            } else {
+                const prefix = pageType === 'welcome' ? '' : '../';
+                window.location.href = `${prefix}ownership/ownership.html?username=${encodeURIComponent(username)}`;
             }
             dropdownMenu.classList.add('hidden');
         });
