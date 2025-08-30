@@ -47,12 +47,21 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuRosters?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `rosters/rosters.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+            if (pageType === 'rosters') {
                 handleFetchRosters();
+            } else {
+                let url = pageType === 'welcome'
+                    ? `rosters/rosters.html?username=${encodeURIComponent(username)}`
+                    : `../rosters/rosters.html?username=${encodeURIComponent(username)}`;
+                const selected = leagueSelect?.value;
+                if (selected && selected !== 'Select a league...') {
+                    url += `&leagueId=${selected}`;
+                } else if (state.currentLeagueId) {
+                    url += `&leagueId=${state.currentLeagueId}`;
+                }
+                window.location.href = url;
             }
             dropdownMenu.classList.add('hidden');
         });
@@ -60,9 +69,12 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         menuAnalyzer?.addEventListener('click', () => {
             const username = usernameInput.value.trim();
             if (!username) return;
-            let url = pageType === 'welcome' ? `analyzer/analyzer.html?username=${encodeURIComponent(username)}` : `../analyzer/analyzer.html?username=${encodeURIComponent(username)}`;
-            if (state.currentLeagueId) {
-                url += `&leagueId=${state.currentLeagueId}`;
+            let url = pageType === 'welcome'
+                ? `analyzer/analyzer.html?username=${encodeURIComponent(username)}`
+                : `../analyzer/analyzer.html?username=${encodeURIComponent(username)}`;
+            const selected = leagueSelect?.value || state.currentLeagueId;
+            if (selected && selected !== 'Select a league...') {
+                url += `&leagueId=${selected}`;
             }
             window.location.href = url;
             dropdownMenu.classList.add('hidden');
@@ -75,12 +87,21 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuOwnership?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `ownership/ownership.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+            if (pageType === 'ownership') {
                 handleFetchOwnership();
+            } else {
+                let url = pageType === 'welcome'
+                    ? `ownership/ownership.html?username=${encodeURIComponent(username)}`
+                    : `../ownership/ownership.html?username=${encodeURIComponent(username)}`;
+                const selected = leagueSelect?.value;
+                if (selected && selected !== 'Select a league...') {
+                    url += `&leagueId=${selected}`;
+                } else if (state.currentLeagueId) {
+                    url += `&leagueId=${state.currentLeagueId}`;
+                }
+                window.location.href = url;
             }
             dropdownMenu.classList.add('hidden');
         });
@@ -137,20 +158,23 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
             });
         }
 
-           leagueSelect?.addEventListener('change', (e) => {
-          handleLeagueSelect(e);
-          if (e && e.target && e.target.blur) e.target.blur();
-        });
-        rosterGrid?.addEventListener('click', handleTeamSelect);
-        mainContent?.addEventListener('click', handleAssetClickForTrade);
-        compareButton?.addEventListener('click', handleCompareClick);
-        clearCompareButton?.addEventListener('click', () => handleClearCompare(true));
-        positionalViewBtn?.addEventListener('click', () => setRosterView('positional'));
-        depthChartViewBtn?.addEventListener('click', () => setRosterView('depth'));
-        positionalFiltersContainer?.addEventListener('click', handlePositionFilter);
+        if (pageType === 'rosters') {
+            leagueSelect?.addEventListener('change', (e) => {
+                handleLeagueSelect(e);
+                if (e && e.target && e.target.blur) e.target.blur();
+            });
+            rosterGrid?.addEventListener('click', handleTeamSelect);
+            mainContent?.addEventListener('click', handleAssetClickForTrade);
+            compareButton?.addEventListener('click', handleCompareClick);
+            clearCompareButton?.addEventListener('click', () => handleClearCompare(true));
+            positionalViewBtn?.addEventListener('click', () => setRosterView('positional'));
+            depthChartViewBtn?.addEventListener('click', () => setRosterView('depth'));
+            positionalFiltersContainer?.addEventListener('click', handlePositionFilter);
+        }
         
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', async () => {
+            if (pageType === 'analyzer') return;
             setLoading(true, 'Loading initial data...');
             await Promise.all([ fetchSleeperPlayers(), fetchDataFromGoogleSheet() ]);
             setLoading(false);
@@ -213,9 +237,17 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
                 
                 populateLeagueSelect(state.leagues);
 
+                const params = new URLSearchParams(window.location.search);
+                const preselectId = params.get('leagueId');
+
                 if (state.leagues.length > 0) {
-                    leagueSelect.selectedIndex = 1;
-                    await handleLeagueSelect();
+                    if (preselectId && state.leagues.some(l => l.league_id === preselectId)) {
+                        leagueSelect.value = preselectId;
+                        await handleLeagueSelect();
+                    } else {
+                        leagueSelect.selectedIndex = 1;
+                        await handleLeagueSelect();
+                    }
                 } else {
                     contextualControls.classList.add('hidden');
                 }
