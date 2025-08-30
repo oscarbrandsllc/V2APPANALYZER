@@ -1863,3 +1863,9 @@ font-weight: 500 !important;
 .username-area {
     max-width: 120px;
 }
+
+.positional-filters-container {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 0.1rem;
+}
