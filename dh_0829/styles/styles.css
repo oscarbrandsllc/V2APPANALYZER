@@ -231,6 +231,12 @@
             display: none;
         }
 
+        #contextual-controls > .header-row:first-child {
+            gap: 0.25rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+
 /* Ensure hidden truly hides views regardless of ID display rules */
 #playerListView.hidden, #rosterView.hidden { display: none !important; }
 
