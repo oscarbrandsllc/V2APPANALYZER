@@ -151,6 +151,7 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', async () => {
+            if (pageType === 'analyzer') return;
             setLoading(true, 'Loading initial data...');
             await Promise.all([ fetchSleeperPlayers(), fetchDataFromGoogleSheet() ]);
             setLoading(false);

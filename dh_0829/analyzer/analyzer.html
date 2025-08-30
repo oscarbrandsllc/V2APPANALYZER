@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="../styles/styles.css?v=20250827002411?v=20250826235225" rel="stylesheet"/>
     <style>
         :root {
             --font-sans: 'Product Sans', 'Google Sans', 'Quicksand', sans-serif;
@@ -124,49 +125,57 @@
             box-shadow: 0 0 8px var(--color-accent-primary-glow);
         }
 
-        #fetchDataButton {
-            border: 1px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: var(--color-text-primary);
-            text-shadow: 0 0 2px rgba(0,0,0,0.2);
-            border-color: #766DFF;
-            box-shadow: 0 0 8px var(--color-accent-primary-glow);
-        }
-        #fetchDataButton:hover {
-             box-shadow: 0 0 12px var(--color-accent-primary-glow);
-        }
-
     </style>
 </head>
-<body class="px-2 pb-4 md:px-8 md:pb-8">
-    <div id="starfield">
+<body data-page="analyzer" class="p-2 sm:p-4">
+    <!-- Replaced Background: Starfield -->
+    <div aria-hidden="true" id="starfield">
         <div id="stars1"></div>
         <div id="stars2"></div>
         <div id="stars3"></div>
     </div>
-
-    <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
-            <p class="text-md text-gray-400">KTC Team Value Analysis</p>
-        </header>
-
-        <!-- Controls -->
-        <div class="glass-panel py-1 px-2 flex flex-col md:flex-row items-center justify-center gap-1" style="display: none;">
-            <input type="text" id="usernameInput" placeholder="Enter Sleeper Username" class="px-3 py-1 text-sm w-full md:w-auto">
-            <div id="leagueSelectWrapper" class="hidden w-full md:w-auto">
-                <select id="leagueSelect" class="px-3 py-1 text-sm w-full md:w-auto appearance-none">
-                    <option>Select a league...</option>
-                </select>
-            </div>
-            <button id="fetchDataButton" class="bg-purple-600/50 hover:bg-purple-700/50 text-white font-bold text-sm py-1 px-3 w-full md:w-auto">Analyze League</button>
+    <div id="noise-overlay"></div>
+    <div class="relative z-10 content-wrapper">
+        <div id="header-container">
+            <header class="app-header glass-panel">
+                <div class="header-row">
+                    <div class="menu-container">
+                        <button id="menu-button" class="menu-button">
+                            <svg viewBox="0 0 100 80" width="20" height="20">
+                                <rect width="100" height="15"></rect>
+                                <rect y="30" width="100" height="15"></rect>
+                                <rect y="60" width="100" height="15"></rect>
+                            </svg>
+                        </button>
+                        <div id="dropdown-menu" class="dropdown-menu hidden">
+                            <a href="../">Home</a>
+                            <a href="#" id="menu-rosters">Rosters</a>
+                            <a href="#" id="menu-ownership">Ownership</a>
+                            <a href="#" id="menu-analyzer">League Analyzer</a>
+                            <a href="#">Placeholder</a>
+                        </div>
+                    </div>
+                    <div class="username-area">
+                        <input autocapitalize="none" autocomplete="username" autocorrect="off" id="usernameInput" inputmode="text" name="username" placeholder="SLPR Username..." type="text" value="The_Oracle"/>
+                    </div>
+                    <div class="custom-select-wrapper">
+                        <select id="leagueSelect" disabled>
+                            <option>Select a league...</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
         </div>
-        
-        <!-- Summary Stats -->
-        <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
+        <main class="container mx-auto" id="content">
+            <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
+                <!-- Page Header -->
+                <header class="text-center space-y-2">
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
+                    <p class="text-md text-gray-400">KTC Team Value Analysis</p>
+                </header>
+
+                <!-- Summary Stats -->
+                <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
             <!-- Summary boxes injected here -->
         </section>
 
@@ -176,7 +185,7 @@
         </div>
 
         <!-- Main Content -->
-        <main id="infographicContent" class="hidden space-y-6">
+        <section id="infographicContent" class="hidden space-y-6">
             <!-- Top Level Charts -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="glass-panel p-2">
@@ -208,6 +217,8 @@
                     <!-- Grid items will be injected here by JavaScript -->
                 </div>
             </section>
+        </section>
+    </div>
         </main>
     </div>
 
@@ -220,7 +231,6 @@
             // --- DOM Elements ---
             const usernameInput = document.getElementById('usernameInput');
             const leagueSelect = document.getElementById('leagueSelect');
-            const fetchDataButton = document.getElementById('fetchDataButton');
             const loadingIndicator = document.getElementById('loading');
             const infographicContent = document.getElementById('infographicContent');
             const starterRankingsGrid = document.getElementById('starterRankingsGrid');
@@ -254,7 +264,11 @@
 
 
             // --- Event Listeners ---
-            fetchDataButton.addEventListener('click', handleFetchData);
+            usernameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleFetchData();
+                }
+            });
             leagueSelect.addEventListener('change', () => {
                 if (leagueSelect.value) {
                     analyzeLeague(leagueSelect.value);
@@ -885,23 +899,19 @@
                     option.textContent = league.name;
                     leagueSelect.appendChild(option);
                 });
-                document.getElementById('leagueSelectWrapper').classList.remove('hidden');
                 leagueSelect.disabled = false;
             }
 
             function setLoading(isLoading) {
                 if (isLoading) {
                     loadingIndicator.classList.remove('hidden');
-                    fetchDataButton.disabled = true;
-                    fetchDataButton.textContent = 'Loading...';
                 } else {
                     loadingIndicator.classList.add('hidden');
-                    fetchDataButton.disabled = false;
-                    fetchDataButton.textContent = 'Analyze League';
                 }
             }
         });
     </script>
+    <script defer src="../scripts/app.js?v=20250826235225"></script>
 </body>
 </html>
 
