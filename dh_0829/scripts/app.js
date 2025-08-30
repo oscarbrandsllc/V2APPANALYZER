@@ -47,12 +47,14 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuRosters?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `rosters/rosters.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+
+            if (pageType === 'rosters') {
                 handleFetchRosters();
+            } else {
+                const base = pageType === 'welcome' ? '' : '..';
+                window.location.href = `${base}/rosters/rosters.html?username=${encodeURIComponent(username)}`;
             }
             dropdownMenu.classList.add('hidden');
         });
@@ -75,12 +77,14 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         });
 
         menuOwnership?.addEventListener('click', () => {
-            if (pageType === 'welcome') {
-                const username = usernameInput.value.trim();
-                if (!username) return;
-                window.location.href = `ownership/ownership.html?username=${encodeURIComponent(username)}`;
-            } else {
+            const username = usernameInput.value.trim();
+            if (!username) return;
+
+            if (pageType === 'ownership') {
                 handleFetchOwnership();
+            } else {
+                const base = pageType === 'welcome' ? '' : '..';
+                window.location.href = `${base}/ownership/ownership.html?username=${encodeURIComponent(username)}`;
             }
             dropdownMenu.classList.add('hidden');
         });
@@ -137,10 +141,12 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
             });
         }
 
-           leagueSelect?.addEventListener('change', (e) => {
-          handleLeagueSelect(e);
-          if (e && e.target && e.target.blur) e.target.blur();
-        });
+        if (pageType !== 'analyzer') {
+            leagueSelect?.addEventListener('change', (e) => {
+                handleLeagueSelect(e);
+                if (e && e.target && e.target.blur) e.target.blur();
+            });
+        }
         rosterGrid?.addEventListener('click', handleTeamSelect);
         mainContent?.addEventListener('click', handleAssetClickForTrade);
         compareButton?.addEventListener('click', handleCompareClick);
@@ -151,6 +157,7 @@ function showLegend(){ try{ document.getElementById('legend-section')?.classList
         
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', async () => {
+            if (pageType === 'analyzer') return;
             setLoading(true, 'Loading initial data...');
             await Promise.all([ fetchSleeperPlayers(), fetchDataFromGoogleSheet() ]);
             setLoading(false);
