@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="../styles/styles.css?v=20250827002411?v=20250826235225" rel="stylesheet"/>
     <style>
         :root {
             --font-sans: 'Product Sans', 'Google Sans', 'Quicksand', sans-serif;
@@ -140,43 +141,67 @@
 
     </style>
 </head>
-<body class="px-2 pb-4 md:px-8 md:pb-8">
+<body data-page="analyzer" class="p-2 sm:p-4">
+    <!-- Starfield Background -->
     <div id="starfield">
         <div id="stars1"></div>
         <div id="stars2"></div>
         <div id="stars3"></div>
     </div>
+    <div id="noise-overlay"></div>
 
-    <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
-            <p class="text-md text-gray-400">KTC Team Value Analysis</p>
-        </header>
+    <div class="relative z-10 content-wrapper">
+        <div id="header-container">
+            <header class="app-header glass-panel">
+                <div class="header-row">
+                    <div class="menu-container">
+                        <button id="menu-button" class="menu-button">
+                            <svg viewBox="0 0 100 80" width="20" height="20">
+                                <rect width="100" height="15"></rect>
+                                <rect y="30" width="100" height="15"></rect>
+                                <rect y="60" width="100" height="15"></rect>
+                            </svg>
+                        </button>
+                        <div id="dropdown-menu" class="dropdown-menu hidden">
+                            <a href="../">Home</a>
+                            <a href="#" id="menu-rosters">Rosters</a>
+                            <a href="#" id="menu-ownership">Ownership</a>
+                            <a href="#" id="menu-analyzer">League Analyzer</a>
+                            <a href="#">Placeholder</a>
+                        </div>
+                    </div>
+                    <div class="username-area">
+                        <input autocapitalize="none" autocomplete="username" autocorrect="off" id="usernameInput" inputmode="text" name="username" placeholder="SLPR Username..." type="text" />
+                    </div>
+                    <div id="leagueSelectWrapper" class="custom-select-wrapper">
+                        <select id="leagueSelect" class="px-3 py-1 text-sm w-full md:w-auto appearance-none" disabled>
+                            <option>Select a league...</option>
+                        </select>
+                    </div>
+                    <button id="fetchDataButton" class="control-button">Analyze League</button>
+                </div>
+            </header>
+        </div>
 
-        <!-- Controls -->
-        <div class="glass-panel py-1 px-2 flex flex-col md:flex-row items-center justify-center gap-1" style="display: none;">
-            <input type="text" id="usernameInput" placeholder="Enter Sleeper Username" class="px-3 py-1 text-sm w-full md:w-auto">
-            <div id="leagueSelectWrapper" class="hidden w-full md:w-auto">
-                <select id="leagueSelect" class="px-3 py-1 text-sm w-full md:w-auto appearance-none">
-                    <option>Select a league...</option>
-                </select>
+        <main class="max-w-7xl mx-auto space-y-2 md:space-y-4" id="content">
+            <!-- Header -->
+            <header class="text-center space-y-2">
+                <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Dynasty League Power Rankings</h1>
+                <p class="text-md text-gray-400">KTC Team Value Analysis</p>
+            </header>
+
+            <!-- Summary Stats -->
+            <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
+                <!-- Summary boxes injected here -->
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden text-center py-8">
+                <p class="text-2xl animate-pulse">Analyzing cosmic data streams...</p>
             </div>
-            <button id="fetchDataButton" class="bg-purple-600/50 hover:bg-purple-700/50 text-white font-bold text-sm py-1 px-3 w-full md:w-auto">Analyze League</button>
-        </div>
-        
-        <!-- Summary Stats -->
-        <section id="summaryStats" class="hidden grid grid-cols-4 lg:grid-cols-8 gap-1 md:gap-4 text-center my-2 md:my-0">
-            <!-- Summary boxes injected here -->
-        </section>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="hidden text-center py-8">
-            <p class="text-2xl animate-pulse">Analyzing cosmic data streams...</p>
-        </div>
-
-        <!-- Main Content -->
-        <main id="infographicContent" class="hidden space-y-6">
+            <!-- Main Content -->
+            <div id="infographicContent" class="hidden space-y-6">
             <!-- Top Level Charts -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="glass-panel p-2">
@@ -226,6 +251,51 @@
             const starterRankingsGrid = document.getElementById('starterRankingsGrid');
             const summaryStats = document.getElementById('summaryStats');
 
+            // --- Menu Elements ---
+            const menuButton = document.getElementById('menu-button');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const menuRosters = document.getElementById('menu-rosters');
+            const menuOwnership = document.getElementById('menu-ownership');
+            const menuAnalyzer = document.getElementById('menu-analyzer');
+
+            menuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (e) => {
+                if (!dropdownMenu.classList.contains('hidden') && !menuButton.contains(e.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+
+            menuRosters.addEventListener('click', () => {
+                const uname = usernameInput.value.trim();
+                if (!uname) return;
+                let url = `../rosters/rosters.html?username=${encodeURIComponent(uname)}`;
+                if (state.currentLeagueId) {
+                    url += `&leagueId=${state.currentLeagueId}`;
+                }
+                window.location.href = url;
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuOwnership.addEventListener('click', () => {
+                const uname = usernameInput.value.trim();
+                if (!uname) return;
+                window.location.href = `../ownership/ownership.html?username=${encodeURIComponent(uname)}`;
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuAnalyzer.addEventListener('click', () => {
+                const uname = usernameInput.value.trim();
+                if (!uname) return;
+                let url = `analyzer.html?username=${encodeURIComponent(uname)}`;
+                if (state.currentLeagueId) {
+                    url += `&leagueId=${state.currentLeagueId}`;
+                }
+                window.location.href = url;
+                dropdownMenu.classList.add('hidden');
+            });
 
             // --- Chart instances ---
             let overallChart, startersChart, radarChart;
@@ -901,6 +971,36 @@
                 }
             }
         });
+
+        (function(){
+            const KEY = 'sleeper_username';
+            const input = document.getElementById('usernameInput');
+            if (!input) return;
+            const normalize = () => (input.value || '').trim().toLowerCase();
+            function persist(){
+                const v = normalize();
+                input.value = v;
+                if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY);
+                if (document.activeElement === input) input.blur();
+            }
+            function resetIOSZoom(){
+                const meta = document.querySelector('meta[name="viewport"]');
+                if (!meta) return;
+                const orig = meta.getAttribute('content') || 'width=device-width, initial-scale=1';
+                const cleaned = orig.replace(/\s*,?\s*maximum-scale\s*=\s*[^,]+/gi, '').replace(/\s*,?\s*user-scalable\s*=\s*[^,]+/gi, '');
+                meta.setAttribute('content', cleaned + ', maximum-scale=1, user-scalable=no');
+                setTimeout(() => meta.setAttribute('content', cleaned), 300);
+            }
+            const saved = (localStorage.getItem(KEY) || '').trim();
+            if (saved) input.value = saved; else { input.removeAttribute('value'); input.value=''; }
+            input.addEventListener('change', persist);
+            input.addEventListener('blur', persist);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') { persist(); resetIOSZoom(); }});
+            ['fetchDataButton'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', () => { persist(); resetIOSZoom(); }, {capture:true});
+            });
+        })();
     </script>
 </body>
 </html>

@@ -217,6 +217,12 @@
             width: 100%;
             padding-bottom: 2px; /* space for scrollbar */
         }
+
+        #contextual-controls .header-row:first-of-type {
+            gap: 0.25rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
         .header-row:nth-child(2), .header-row:nth-child(3) {
             border-top: 1px solid var(--color-panel-border);
             padding-top: 0.25rem;
