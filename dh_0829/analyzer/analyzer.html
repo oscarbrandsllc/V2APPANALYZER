@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="../styles/styles.css?v=20250827002411?v=20250826235225" rel="stylesheet"/>
     <style>
         :root {
             --font-sans: 'Product Sans', 'Google Sans', 'Quicksand', sans-serif;
@@ -146,6 +147,36 @@
         <div id="stars2"></div>
         <div id="stars3"></div>
     </div>
+    <div id="header-container">
+<header class="app-header glass-panel">
+<div class="header-row">
+<div class="menu-container">
+    <button id="menu-button" class="menu-button">
+        <svg viewBox="0 0 100 80" width="20" height="20">
+            <rect width="100" height="15"></rect>
+            <rect y="30" width="100" height="15"></rect>
+            <rect y="60" width="100" height="15"></rect>
+        </svg>
+    </button>
+    <div id="dropdown-menu" class="dropdown-menu hidden">
+        <a href="../">Home</a>
+        <a href="#" id="menu-rosters">Rosters</a>
+        <a href="#" id="menu-ownership">Ownership</a>
+        <a href="#" id="menu-analyzer">League Analyzer</a>
+        <a href="#">Placeholder</a>
+    </div>
+</div>
+<div class="username-area">
+<input autocapitalize="none" autocomplete="username" autocorrect="off" id="usernameInput" inputmode="text" name="username" placeholder="SLPR Username..." type="text" value="The_Oracle"/>
+</div>
+<div class="custom-select-wrapper">
+<select disabled="" id="leagueSelect">
+<option>Select a league...</option>
+</select>
+</div>
+</div>
+</header>
+</div>
 
     <div class="max-w-7xl mx-auto space-y-2 md:space-y-4">
         <!-- Header -->
@@ -220,8 +251,12 @@
             // --- DOM Elements ---
             const usernameInput = document.getElementById('usernameInput');
             const leagueSelect = document.getElementById('leagueSelect');
-            const fetchDataButton = document.getElementById('fetchDataButton');
             const loadingIndicator = document.getElementById('loading');
+            const menuButton = document.getElementById('menu-button');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const menuRosters = document.getElementById('menu-rosters');
+            const menuOwnership = document.getElementById('menu-ownership');
+            const menuAnalyzer = document.getElementById('menu-analyzer');
             const infographicContent = document.getElementById('infographicContent');
             const starterRankingsGrid = document.getElementById('starterRankingsGrid');
             const summaryStats = document.getElementById('summaryStats');
@@ -254,7 +289,35 @@
 
 
             // --- Event Listeners ---
-            fetchDataButton.addEventListener('click', handleFetchData);
+            menuButton?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (dropdownMenu && !dropdownMenu.classList.contains('hidden') && !menuButton.contains(e.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+
+            menuRosters?.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                if (!username) return;
+                window.location.href = `../rosters/rosters.html?username=${encodeURIComponent(username)}`;
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuAnalyzer?.addEventListener('click', () => {
+                dropdownMenu.classList.add('hidden');
+            });
+
+            menuOwnership?.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                if (!username) return;
+                window.location.href = `../ownership/ownership.html?username=${encodeURIComponent(username)}`;
+                dropdownMenu.classList.add('hidden');
+            });
+
             leagueSelect.addEventListener('change', () => {
                 if (leagueSelect.value) {
                     analyzeLeague(leagueSelect.value);
@@ -294,7 +357,6 @@
                                 await analyzeLeague(leagueId);
                             } else {
                                 alert('The specified league was not found for this user.');
-                                setLoading(false);
                             }
                         } else {
                             // Auto-select and analyze the first league
@@ -885,25 +947,17 @@
                     option.textContent = league.name;
                     leagueSelect.appendChild(option);
                 });
-                document.getElementById('leagueSelectWrapper').classList.remove('hidden');
                 leagueSelect.disabled = false;
             }
 
             function setLoading(isLoading) {
                 if (isLoading) {
                     loadingIndicator.classList.remove('hidden');
-                    fetchDataButton.disabled = true;
-                    fetchDataButton.textContent = 'Loading...';
                 } else {
                     loadingIndicator.classList.add('hidden');
-                    fetchDataButton.disabled = false;
-                    fetchDataButton.textContent = 'Analyze League';
                 }
             }
         });
     </script>
 </body>
 </html>
-
-
-
